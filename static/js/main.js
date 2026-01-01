@@ -406,3 +406,474 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('cpu-load').textContent = `${cpuLoad}%`;
     }, 3000);
 });
+// Additional functions for main.js
+
+// Toast notification system
+function showToast(message, type = 'info', duration = 3000) {
+    const toastContainer = document.getElementById('toast-container') || createToastContainer();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <i class="fas fa-${getToastIcon(type)}"></i>
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Auto-remove after duration
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, duration);
+}
+
+function getToastIcon(type) {
+    const icons = {
+        'success': 'check-circle',
+        'error': 'exclamation-circle',
+        'warning': 'exclamation-triangle',
+        'info': 'info-circle'
+    };
+    return icons[type] || 'info-circle';
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+    return container;
+}
+
+// Keyboard shortcuts
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Don't trigger if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        // Prevent default behavior for our shortcuts
+        const key = e.key.toLowerCase();
+        const ctrl = e.ctrlKey || e.metaKey;
+        const shift = e.shiftKey;
+        const alt = e.altKey;
+        
+        // Global shortcuts
+        switch(key) {
+            case ' ':
+                // Space bar: Play/pause both decks
+                e.preventDefault();
+                if (djState.decks.A.playing && djState.decks.B.playing) {
+                    togglePlay('A');
+                    togglePlay('B');
+                } else if (djState.decks.A.playing) {
+                    togglePlay('A');
+                } else if (djState.decks.B.playing) {
+                    togglePlay('B');
+                }
+                break;
+                
+            case '1':
+                if (ctrl) {
+                    e.preventDefault();
+                    loadSampleTrack('A');
+                }
+                break;
+                
+            case '2':
+                if (ctrl) {
+                    e.preventDefault();
+                    loadSampleTrack('B');
+                }
+                break;
+                
+            case 'q':
+                // Cue deck A
+                if (!shift) {
+                    e.preventDefault();
+                    cueTrack('A');
+                }
+                break;
+                
+            case 'w':
+                // Cue deck B
+                if (!shift) {
+                    e.preventDefault();
+                    cueTrack('B');
+                }
+                break;
+                
+            case 'a':
+                // Play/pause deck A
+                if (!shift) {
+                    e.preventDefault();
+                    togglePlay('A');
+                }
+                break;
+                
+            case 's':
+                // Play/pause deck B
+                if (!shift) {
+                    e.preventDefault();
+                    togglePlay('B');
+                }
+                break;
+                
+            case 'z':
+                // Stop deck A
+                if (!shift) {
+                    e.preventDefault();
+                    stopTrack('A');
+                }
+                break;
+                
+            case 'x':
+                // Stop deck B
+                if (!shift) {
+                    e.preventDefault();
+                    stopTrack('B');
+                }
+                break;
+                
+            case 'b':
+                // Sync beats
+                if (ctrl) {
+                    e.preventDefault();
+                    syncBeats();
+                }
+                break;
+                
+            case 'h':
+                // Show/hide shortcuts help
+                if (ctrl) {
+                    e.preventDefault();
+                    toggleShortcutsHelp();
+                }
+                break;
+                
+            case 'm':
+                // Toggle mute master
+                if (ctrl) {
+                    e.preventDefault();
+                    toggleMasterMute();
+                }
+                break;
+                
+            case 'r':
+                // Record mix
+                if (ctrl) {
+                    e.preventDefault();
+                    recordMix();
+                }
+                break;
+        }
+        
+        // Crossfader with arrow keys
+        if (!ctrl && !alt) {
+            const crossfader = document.getElementById('crossfader');
+            let currentValue = parseInt(crossfader.value);
+            
+            switch(key) {
+                case 'arrowleft':
+                    e.preventDefault();
+                    currentValue = Math.max(0, currentValue - 5);
+                    crossfader.value = currentValue;
+                    updateCrossfader(currentValue);
+                    break;
+                    
+                case 'arrowright':
+                    e.preventDefault();
+                    currentValue = Math.min(100, currentValue + 5);
+                    crossfader.value = currentValue;
+                    updateCrossfader(currentValue);
+                    break;
+                    
+                case 'arrowup':
+                    e.preventDefault();
+                    // Increase master volume
+                    const masterVolume = document.getElementById('master-volume');
+                    let masterValue = parseInt(masterVolume.value);
+                    masterValue = Math.min(100, masterValue + 5);
+                    masterVolume.value = masterValue;
+                    updateMasterVolume(masterValue);
+                    break;
+                    
+                case 'arrowdown':
+                    e.preventDefault();
+                    // Decrease master volume
+                    const masterVolume2 = document.getElementById('master-volume');
+                    let masterValue2 = parseInt(masterVolume2.value);
+                    masterValue2 = Math.max(0, masterValue2 - 5);
+                    masterVolume2.value = masterValue2;
+                    updateMasterVolume(masterValue2);
+                    break;
+            }
+        }
+    });
+}
+
+function toggleShortcutsHelp() {
+    const help = document.getElementById('shortcuts-help') || createShortcutsHelp();
+    help.classList.toggle('active');
+}
+
+function createShortcutsHelp() {
+    const help = document.createElement('div');
+    help.id = 'shortcuts-help';
+    help.className = 'shortcuts-help';
+    help.innerHTML = `
+        <h4><i class="fas fa-keyboard"></i> Keyboard Shortcuts</h4>
+        <div class="shortcuts-list">
+            <div class="shortcut-item">
+                <span>Space</span>
+                <span class="shortcut-key">Play/Pause</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Ctrl + 1/2</span>
+                <span class="shortcut-key">Load Sample</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Q/W</span>
+                <span class="shortcut-key">Cue Deck A/B</span>
+            </div>
+            <div class="shortcut-item">
+                <span>A/S</span>
+                <span class="shortcut-key">Play Deck A/B</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Z/X</span>
+                <span class="shortcut-key">Stop Deck A/B</span>
+            </div>
+            <div class="shortcut-item">
+                <span>←/→</span>
+                <span class="shortcut-key">Crossfader</span>
+            </div>
+            <div class="shortcut-item">
+                <span>↑/↓</span>
+                <span class="shortcut-key">Master Volume</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Ctrl + B</span>
+                <span class="shortcut-key">Sync Beats</span>
+            </div>
+            <div class="shortcut-item">
+                <span>Ctrl + H</span>
+                <span class="shortcut-key">Show Help</span>
+            </div>
+        </div>
+        <button class="btn-close-help" onclick="this.parentElement.classList.remove('active')">
+            Close
+        </button>
+    `;
+    document.body.appendChild(help);
+    return help;
+}
+
+function loadSampleTrack(deckId) {
+    const sampleTracks = [
+        {
+            id: 'CevxZvSJLk8',
+            title: 'Daft Punk - Around The World',
+            artist: 'Daft Punk',
+            bpm: 122,
+            duration: 425
+        },
+        {
+            id: 'FxzBavqPpxs',
+            title: 'Avicii - Levels',
+            artist: 'Avicii',
+            bpm: 128,
+            duration: 345
+        },
+        {
+            id: 'gCYcHz2k5x0',
+            title: 'Calvin Harris - Feel So Close',
+            artist: 'Calvin Harris',
+            bpm: 128,
+            duration: 228
+        }
+    ];
+    
+    const randomTrack = sampleTracks[Math.floor(Math.random() * sampleTracks.length)];
+    
+    // Simulate loading the track
+    djState.updateDeck(deckId, {
+        loaded: true,
+        title: randomTrack.title,
+        artist: randomTrack.artist,
+        bpm: randomTrack.bpm,
+        duration: randomTrack.duration,
+        videoId: randomTrack.id,
+        currentTime: 0
+    });
+    
+    // Update UI
+    const deckElement = document.getElementById(`deck-${deckId.toLowerCase()}`);
+    if (deckElement) {
+        const thumb = deckElement.querySelector('.track-thumbnail img');
+        if (thumb) {
+            thumb.src = `https://img.youtube.com/vi/${randomTrack.id}/0.jpg`;
+        }
+    }
+    
+    showToast(`Loaded sample track: ${randomTrack.title}`, 'success');
+    updateStatus(`Loaded ${randomTrack.title} (${randomTrack.bpm} BPM)`);
+}
+
+function toggleMasterMute() {
+    const masterSlider = document.getElementById('master-volume');
+    const currentValue = parseInt(masterSlider.value);
+    
+    if (currentValue > 0) {
+        masterSlider.dataset.previous = currentValue;
+        masterSlider.value = 0;
+        updateMasterVolume(0);
+        showToast('Master muted', 'info');
+    } else {
+        const previous = parseInt(masterSlider.dataset.previous || '70');
+        masterSlider.value = previous;
+        updateMasterVolume(previous);
+        showToast('Master unmuted', 'info');
+    }
+}
+
+// Cue point management
+const cuePoints = {
+    deckA: [],
+    deckB: []
+};
+
+function setCuePoint(deckId) {
+    const deck = djState.decks[deckId];
+    if (!deck.loaded) return;
+    
+    const cueNumber = cuePoints[`deck${deckId}`].length + 1;
+    if (cueNumber > 8) {
+        showToast('Maximum 8 cue points allowed', 'warning');
+        return;
+    }
+    
+    const cueTime = deck.currentTime;
+    cuePoints[`deck${deckId}`].push({
+        number: cueNumber,
+        time: cueTime,
+        color: getCueColor(cueNumber)
+    });
+    
+    // Add visual cue point to waveform
+    addCuePointVisual(deckId, cueNumber, cueTime);
+    
+    showToast(`Cue ${cueNumber} set at ${formatTime(cueTime)}`, 'success');
+}
+
+function getCueColor(number) {
+    const colors = [
+        '#FF5252', '#FF9800', '#FFEB3B', '#4CAF50',
+        '#2196F3', '#9C27B0', '#E91E63', '#00BCD4'
+    ];
+    return colors[(number - 1) % colors.length];
+}
+
+function addCuePointVisual(deckId, number, time) {
+    const waveform = document.getElementById(`waveform-${deckId.toLowerCase()}`);
+    if (!waveform) return;
+    
+    const cuePoint = document.createElement('div');
+    cuePoint.className = 'cue-point';
+    cuePoint.dataset.number = number;
+    cuePoint.style.left = `${(time / djState.decks[deckId].duration) * 100}%`;
+    cuePoint.title = `Cue ${number}: ${formatTime(time)}`;
+    
+    cuePoint.addEventListener('click', (e) => {
+        e.stopPropagation();
+        jumpToCuePoint(deckId, number);
+    });
+    
+    waveform.appendChild(cuePoint);
+}
+
+function jumpToCuePoint(deckId, number) {
+    const cue = cuePoints[`deck${deckId}`].find(c => c.number === number);
+    if (!cue) return;
+    
+    const source = audioEngine.sources[`deck${deckId}`];
+    if (source && source.element) {
+        source.element.currentTime = cue.time;
+        djState.decks[deckId].currentTime = cue.time;
+        updateProgress(deckId, cue.time, djState.decks[deckId].duration);
+        
+        showToast(`Jumped to cue ${number}`, 'info');
+    }
+}
+
+function clearCuePoints(deckId) {
+    cuePoints[`deck${deckId}`] = [];
+    
+    // Remove visual cues
+    const waveform = document.getElementById(`waveform-${deckId.toLowerCase()}`);
+    if (waveform) {
+        const cueElements = waveform.querySelectorAll('.cue-point');
+        cueElements.forEach(el => el.remove());
+    }
+    
+    showToast(`Cleared cue points for deck ${deckId}`, 'info');
+}
+
+// Initialize additional features
+function initAdditionalFeatures() {
+    // Create toast container
+    createToastContainer();
+    
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts();
+    
+    // Create shortcuts help
+    createShortcutsHelp();
+    
+    // Initialize beat visualization
+    initBeatVisualization();
+    
+    // Add cue point buttons
+    ['A', 'B'].forEach(deckId => {
+        const transportControls = document.querySelector(`#deck-${deckId.toLowerCase()} .transport-controls`);
+        if (transportControls) {
+            const cueButton = document.createElement('button');
+            cueButton.className = 'control-btn btn-cue-set';
+            cueButton.innerHTML = '<i class="fas fa-flag"></i> CUE';
+            cueButton.title = 'Set cue point (Ctrl+Click to clear all)';
+            cueButton.onclick = (e) => {
+                if (e.ctrlKey) {
+                    clearCuePoints(deckId);
+                } else {
+                    setCuePoint(deckId);
+                }
+            };
+            transportControls.appendChild(cueButton);
+        }
+    });
+    
+    showToast('DJ Mixer Pro initialized!', 'success');
+}
+
+// Update the DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    initAudioEngine();
+    initWaveforms();
+    initAdditionalFeatures();
+    updateStatus('DJ Mixer Pro Ready');
+    
+    // Initialize YouTube loader
+    initYouTubeLoader();
+    
+    // Simulate CPU usage updates
+    setInterval(() => {
+        const cpuLoad = Math.floor(Math.random() * 30) + 20;
+        document.getElementById('cpu-load').textContent = `${cpuLoad}%`;
+    }, 3000);
+});
