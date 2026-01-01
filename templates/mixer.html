@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Mixer Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/decks.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7"></script>
+</head>
+<body>
+    <div class="dj-container">
+        <!-- Header -->
+        <header class="dj-header">
+            <h1><i class="fas fa-sliders-h"></i> DJ Mixer Pro</h1>
+            <div class="bpm-display">
+                <span>Master BPM: <span id="master-bpm">120</span></span>
+                <button id="sync-beats" class="btn-sync">
+                    <i class="fas fa-sync"></i> Sync Beats
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Mixer -->
+        <div class="mixer-main">
+            <!-- Deck A -->
+            <div class="deck-container" id="deck-a">
+                <div class="deck-header">
+                    <h2>DECK A</h2>
+                    <div class="deck-bpm">BPM: <span class="bpm-value">120</span></div>
+                </div>
+                
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" id="search-a" placeholder="Search YouTube..." 
+                               class="search-input">
+                        <button class="search-btn" onclick="searchTrack('a')">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="results-a"></div>
+                </div>
+
+                <!-- Track Info -->
+                <div class="track-info">
+                    <div class="track-thumbnail">
+                        <img id="thumb-a" src="https://via.placeholder.com/150x85" 
+                             alt="Track Thumbnail">
+                    </div>
+                    <div class="track-details">
+                        <h3 id="title-a">No Track Loaded</h3>
+                        <p id="artist-a">--:--</p>
+                        <div class="track-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-a"></div>
+                            </div>
+                            <span class="time-current" id="time-a">0:00</span>
+                            <span class="time-total" id="duration-a">0:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Waveform Display -->
+                <div class="waveform-container">
+                    <div id="waveform-a" class="waveform"></div>
+                </div>
+
+                <!-- Deck Controls -->
+                <div class="deck-controls">
+                    <!-- Transport Controls -->
+                    <div class="transport-controls">
+                        <button class="control-btn btn-cue" onclick="cueTrack('a')">
+                            <i class="fas fa-backward"></i> CUE
+                        </button>
+                        <button class="control-btn btn-play" onclick="togglePlay('a')">
+                            <i class="fas fa-play"></i> PLAY
+                        </button>
+                        <button class="control-btn btn-pause" onclick="togglePause('a')">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <button class="control-btn btn-stop" onclick="stopTrack('a')">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                    </div>
+
+                    <!-- Pitch Control -->
+                    <div class="pitch-control">
+                        <label>Pitch</label>
+                        <div class="pitch-slider-container">
+                            <input type="range" id="pitch-a" min="-50" max="50" value="0" 
+                                   class="pitch-slider" oninput="adjustPitch('a', this.value)">
+                            <span class="pitch-value">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- EQ Controls -->
+                    <div class="eq-controls">
+                        <div class="eq-band">
+                            <label>Low</label>
+                            <input type="range" class="eq-slider" min="-12" max="12" value="0">
+                        </div>
+                        <div class="eq-band">
+                            <label>Mid</label>
+                            <input type="range" class="eq-slider" min="-12" max="12" value="0">
+                        </div>
+                        <div class="eq-band">
+                            <label>High</label>
+                            <input type="range" class="eq-slider" min="-12" max="12" value="0">
+                        </div>
+                    </div>
+
+                    <!-- Volume Control -->
+                    <div class="volume-control">
+                        <label>Volume</label>
+                        <input type="range" id="volume-a" min="0" max="100" value="80" 
+                               class="volume-slider" orient="vertical"
+                               oninput="adjustVolume('a', this.value)">
+                        <div class="volume-meter">
+                            <div class="meter-fill" id="meter-a"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mixer Section -->
+            <div class="mixer-section">
+                <!-- Crossfader -->
+                <div class="crossfader-container">
+                    <h3>CROSSFADER</h3>
+                    <input type="range" id="crossfader" min="0" max="100" value="50" 
+                           class="crossfader-slider" oninput="updateCrossfader(this.value)">
+                    <div class="fader-labels">
+                        <span>A</span>
+                        <span>B</span>
+                    </div>
+                </div>
+
+                <!-- Master Controls -->
+                <div class="master-controls">
+                    <div class="master-volume">
+                        <label>Master Volume</label>
+                        <input type="range" id="master-volume" min="0" max="100" value="70"
+                               class="master-slider" orient="vertical"
+                               oninput="updateMasterVolume(this.value)">
+                    </div>
+                    <div class="master-eq">
+                        <h4>Master EQ</h4>
+                        <input type="range" min="-12" max="12" value="0" class="master-eq-slider">
+                        <input type="range" min="-12" max="12" value="0" class="master-eq-slider">
+                        <input type="range" min="-12" max="12" value="0" class="master-eq-slider">
+                    </div>
+                </div>
+
+                <!-- Effects Section -->
+                <div class="effects-section">
+                    <h3>EFFECTS</h3>
+                    <div class="effects-buttons">
+                        <button class="effect-btn" onclick="toggleEffect('filter')">
+                            <i class="fas fa-wave-square"></i> Filter
+                        </button>
+                        <button class="effect-btn" onclick="toggleEffect('echo')">
+                            <i class="fas fa-echo"></i> Echo
+                        </button>
+                        <button class="effect-btn" onclick="toggleEffect('reverb')">
+                            <i class="fas fa-mountain"></i> Reverb
+                        </button>
+                        <button class="effect-btn" onclick="toggleEffect('flanger')">
+                            <i class="fas fa-water"></i> Flanger
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deck B (Mirror of Deck A) -->
+            <div class="deck-container" id="deck-b">
+                <!-- Same structure as Deck A -->
+                <!-- Duplicate all Deck A controls with 'b' identifiers -->
+            </div>
+        </div>
+
+        <!-- Footer Controls -->
+        <footer class="dj-footer">
+            <div class="transport-global">
+                <button class="global-btn" onclick="playBoth()">
+                    <i class="fas fa-play-circle"></i> Play Both
+                </button>
+                <button class="global-btn" onclick="stopAll()">
+                    <i class="fas fa-stop-circle"></i> Stop All
+                </button>
+                <button class="global-btn" onclick="recordMix()">
+                    <i class="fas fa-record-vinyl"></i> Record Mix
+                </button>
+            </div>
+            <div class="status-bar">
+                <span id="status-message">Ready to mix...</span>
+                <div class="cpu-meter">
+                    <i class="fas fa-microchip"></i>
+                    <span id="cpu-load">25%</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/audio-engine.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/youtube-loader.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/beat-matcher.js') }}"></script>
+    
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        
+        // Global state
+        const state = {
+            deckA: {
+                loaded: false,
+                playing: false,
+                bpm: 120,
+                audioContext: null,
+                source: null,
+                gainNode: null,
+                currentTime: 0,
+                duration: 0,
+                videoId: null
+            },
+            deckB: {
+                loaded: false,
+                playing: false,
+                bpm: 120,
+                audioContext: null,
+                source: null,
+                gainNode: null,
+                currentTime: 0,
+                duration: 0,
+                videoId: null
+            },
+            crossfader: 0.5,
+            masterVolume: 0.7,
+            effects: {
+                filter: false,
+                echo: false,
+                reverb: false,
+                flanger: false
+            }
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initAudioEngine();
+            initWaveforms();
+            
+            // Socket event listeners
+            socket.on('deck_update', handleDeckUpdate);
+            socket.on('crossfader_update', handleCrossfaderUpdate);
+            socket.on('sync_update', handleSyncUpdate);
+            
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
