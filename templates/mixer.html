@@ -176,8 +176,107 @@
 
             <!-- Deck B (Mirror of Deck A) -->
             <div class="deck-container" id="deck-b">
-                <!-- Same structure as Deck A -->
-                <!-- Duplicate all Deck A controls with 'b' identifiers -->
+                <!-- Deck B -->
+    <div class="deck-container" id="deck-b">
+        <!-- Deck B content (mirror of Deck A with 'b' identifiers) -->
+        <div class="deck-header">
+            <h2>DECK B</h2>
+            <div class="deck-bpm">BPM: <span class="bpm-value" id="bpm-b">120</span></div>
+        </div>
+        
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="search-b" placeholder="Search YouTube..." 
+                       class="search-input">
+                <button class="search-btn" onclick="searchTrack('b')">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="search-results" id="results-b"></div>
+        </div>
+
+        <!-- Track Info -->
+        <div class="track-info">
+            <div class="track-thumbnail">
+                <img id="thumb-b" src="https://via.placeholder.com/150x85" 
+                     alt="Track Thumbnail">
+            </div>
+            <div class="track-details">
+                <h3 id="title-b">No Track Loaded</h3>
+                <p id="artist-b">--:--</p>
+                <div class="track-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-b"></div>
+                    </div>
+                    <span class="time-current" id="time-b">0:00</span>
+                    <span class="time-total" id="duration-b">0:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waveform Display -->
+        <div class="waveform-container">
+            <div id="waveform-b" class="waveform"></div>
+        </div>
+
+        <!-- Deck Controls -->
+        <div class="deck-controls">
+            <!-- Transport Controls -->
+            <div class="transport-controls">
+                <button class="control-btn btn-cue" onclick="cueTrack('b')">
+                    <i class="fas fa-backward"></i> CUE
+                </button>
+                <button class="control-btn btn-play" onclick="togglePlay('b')">
+                    <i class="fas fa-play"></i> PLAY
+                </button>
+                <button class="control-btn btn-pause" onclick="togglePause('b')">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button class="control-btn btn-stop" onclick="stopTrack('b')">
+                    <i class="fas fa-stop"></i>
+                </button>
+            </div>
+
+            <!-- Pitch Control -->
+            <div class="pitch-control">
+                <label>Pitch</label>
+                <div class="pitch-slider-container">
+                    <input type="range" id="pitch-b" min="-50" max="50" value="0" 
+                           class="pitch-slider" oninput="adjustPitch('b', this.value)">
+                    <span class="pitch-value" id="pitch-value-b">0%</span>
+                </div>
+            </div>
+
+            <!-- EQ Controls -->
+            <div class="eq-controls">
+                <div class="eq-band">
+                    <label>Low</label>
+                    <input type="range" class="eq-slider" id="eq-low-b" min="-12" max="12" value="0">
+                </div>
+                <div class="eq-band">
+                    <label>Mid</label>
+                    <input type="range" class="eq-slider" id="eq-mid-b" min="-12" max="12" value="0">
+                </div>
+                <div class="eq-band">
+                    <label>High</label>
+                    <input type="range" class="eq-slider" id="eq-high-b" min="-12" max="12" value="0">
+                </div>
+            </div>
+
+            <!-- Volume Control -->
+            <div class="volume-control">
+                <label>Volume</label>
+                <input type="range" id="volume-b" min="0" max="100" value="80" 
+                       class="volume-slider" orient="vertical"
+                       oninput="adjustVolume('b', this.value)">
+                <div class="volume-meter">
+                    <div class="meter-fill" id="meter-b"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </div>
 

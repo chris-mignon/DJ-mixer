@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Mixer Pro - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="landing-container">
+        <header class="landing-header">
+            <h1><i class="fas fa-sliders-h"></i> DJ Mixer Pro</h1>
+            <p class="tagline">Mix YouTube tracks in real-time with professional DJ tools</p>
+        </header>
+
+        <main class="landing-main">
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2>Your Virtual DJ Studio</h2>
+                    <p>Load tracks from YouTube, mix, crossfade, and apply effects - all in your browser.</p>
+                    <a href="{{ url_for('mixer') }}" class="cta-button">
+                        <i class="fas fa-play-circle"></i> Start Mixing Now
+                    </a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="DJ Mixer">
+                </div>
+            </section>
+
+            <section class="features-section">
+                <h3>Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-youtube"></i>
+                        </div>
+                        <h4>YouTube Integration</h4>
+                        <p>Search and load tracks directly from YouTube. No need to download.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-wave-square"></i>
+                        </div>
+                        <h4>Waveform Display</h4>
+                        <p>Visualize your tracks with detailed waveforms for precise cueing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h4>Beat Sync</h4>
+                        <p>Automatically synchronize beats for seamless transitions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <h4>Professional Mixer</h4>
+                        <p>Dual decks, crossfader, EQ controls, and effects for a pro DJ experience.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="how-it-works">
+                <h3>How It Works</h3>
+                <ol class="steps">
+                    <li>Search for a track on YouTube in one of the decks.</li>
+                    <li>Load the track and adjust the BPM and pitch if needed.</li>
+                    <li>Use the crossfader and EQ to mix between two tracks.</li>
+                    <li>Apply effects and record your mix.</li>
+                </ol>
+            </section>
+        </main>
+
+        <footer class="landing-footer">
+            <p>DJ Mixer Pro &copy; 2023 | Built with Flask and Web Audio API</p>
+            <p class="disclaimer">Disclaimer: This application is for educational purposes. Please respect YouTube's terms of service.</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

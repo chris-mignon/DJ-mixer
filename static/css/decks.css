@@ -1,0 +1,127 @@
+/* Deck-specific styles that might not be in style.css */
+
+/* Loading animation */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #00adb5;
+    font-style: italic;
+}
+
+/* No results and error messages */
+.no-results, .error {
+    text-align: center;
+    padding: 20px;
+    color: #ff9800;
+}
+
+/* Search result item hover effect */
+.search-result-item {
+    transition: all 0.2s ease;
+}
+
+.search-result-item:hover {
+    background: rgba(0, 173, 181, 0.2);
+    transform: translateX(5px);
+}
+
+/* Waveform container */
+.waveform-container {
+    position: relative;
+}
+
+.waveform {
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Deck controls layout adjustments */
+.deck-controls {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.transport-controls {
+    grid-column: span 4;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Pitch slider styling */
+.pitch-slider-container {
+    display: flex;
+    align-items: center;
+}
+
+.pitch-slider {
+    flex: 1;
+}
+
+.pitch-value {
+    min-width: 60px;
+    text-align: center;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+/* EQ sliders vertical */
+.eq-slider {
+    -webkit-appearance: slider-vertical;
+    width: 30px;
+    height: 120px;
+}
+
+/* Volume slider vertical */
+.volume-slider {
+    -webkit-appearance: slider-vertical;
+    width: 30px;
+    height: 150px;
+}
+
+/* Crossfader */
+.crossfader-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(90deg, #00adb5, #393e46, #00adb5);
+    border-radius: 20px;
+    outline: none;
+    transform: rotate(-90deg);
+    margin: 40px 0;
+}
+
+.crossfader-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 50%;
+    border: 4px solid #00ff88;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+/* Responsive adjustments for decks */
+@media (max-width: 1200px) {
+    .deck-controls {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .transport-controls {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .deck-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .transport-controls {
+        grid-column: span 1;
+    }
+}
