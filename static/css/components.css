@@ -1,0 +1,428 @@
+/* Components CSS */
+
+/* Search Results */
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: rgba(57, 62, 70, 0.5);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.search-result-item:hover {
+    background: rgba(0, 173, 181, 0.2);
+    border-color: #00adb5;
+    transform: translateY(-2px);
+}
+
+.result-thumbnail {
+    position: relative;
+    margin-right: 15px;
+}
+
+.result-thumbnail img {
+    width: 120px;
+    height: 68px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.result-duration {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+
+.result-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.result-title {
+    font-weight: bold;
+    color: #00ff88;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.result-channel {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.result-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.result-bpm {
+    color: #ff9800;
+    font-weight: bold;
+}
+
+.result-load-btn {
+    background: linear-gradient(45deg, #00adb5, #0097a7);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.result-load-btn:hover {
+    background: linear-gradient(45deg, #0097a7, #00838f);
+    transform: scale(1.05);
+}
+
+.no-results {
+    text-align: center;
+    padding: 30px;
+    color: #ff9800;
+    font-style: italic;
+}
+
+/* Beat Grid */
+.beat-grid {
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* Beat Counter */
+.beat-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #00ff88;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 2;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 173, 181, 0.3);
+    border-radius: 50%;
+    border-top-color: #00adb5;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    background: rgba(57, 62, 70, 0.95);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    min-width: 300px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #00adb5;
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast.success {
+    border-left-color: #4caf50;
+}
+
+.toast.warning {
+    border-left-color: #ff9800;
+}
+
+.toast.error {
+    border-left-color: #f44336;
+}
+
+.toast.info {
+    border-left-color: #2196f3;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* EQ Knobs */
+.eq-knob {
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle at 30% 30%, #222831, #1b2028);
+    border-radius: 50%;
+    position: relative;
+    border: 2px solid #393e46;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.eq-knob::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 15px;
+    background: #00adb5;
+    border-radius: 2px;
+}
+
+/* Waveform Overlay */
+.waveform-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.playhead {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: #ff9800;
+    box-shadow: 0 0 10px #ff9800;
+    z-index: 2;
+}
+
+/* Cue Points */
+.cue-point {
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: #00ff88;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.cue-point::after {
+    content: attr(data-number);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ff88;
+    color: black;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Mixer Channel Strips */
+.channel-strip {
+    background: linear-gradient(180deg, #222831 0%, #1b2028 100%);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid #393e46;
+}
+
+.channel-meter {
+    height: 200px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.meter-level {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(0deg, #4caf50, #ffeb3b, #f44336);
+    transition: height 0.1s ease;
+}
+
+/* Preset Manager */
+.preset-manager {
+    background: rgba(57, 62, 70, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.preset-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.preset-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.preset-item:hover {
+    border-color: #00adb5;
+    background: rgba(0, 173, 181, 0.1);
+}
+
+/* Keyboard Shortcuts Help */
+.shortcuts-help {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(57, 62, 70, 0.95);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 300px;
+    display: none;
+    z-index: 1000;
+    border: 2px solid #00adb5;
+}
+
+.shortcuts-help.active {
+    display: block;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #393e46;
+}
+
+.shortcut-key {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: #00ff88;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .search-result-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .result-thumbnail {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .result-details {
+        width: 100%;
+    }
+    
+    .result-meta {
+        justify-content: center;
+    }
+    
+    .beat-counter {
+        font-size: 1rem;
+        padding: 3px 8px;
+    }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #888;
+}
+
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.p-10 { padding: 10px; }
+.p-20 { padding: 20px; }
+
+/* Scrollbar styling for components */
+.component-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #00adb5 #393e46;
+}
+
+.component-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.component-scroll::-webkit-scrollbar-track {
+    background: #393e46;
+    border-radius: 4px;
+}
+
+.component-scroll::-webkit-scrollbar-thumb {
+    background: #00adb5;
+    border-radius: 4px;
+}
+
+.component-scroll::-webkit-scrollbar-thumb:hover {
+    background: #0097a7;
+}
